@@ -41,7 +41,7 @@ export const logoutUser = catchAsyncError(async (req, res, next)=>{
         httpOnly:true,
         sameSite:"none",
         expires: new Date(Date.now()),
-        secure
+        secure:true
     }).json({
         success:true,
         message:"Logged out successfully"
