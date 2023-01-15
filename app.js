@@ -18,7 +18,7 @@ app.use(
 app.use(cookieParser());
 app.use(cors({
     origin:process.env.FRONTEND_URI,
-    credentials:true,
+    withCredentials: true,
     methods:["GET", "POST", "PUT", "DELETE"]
 }))
 import user from "./routes/userRoutes.js";
