@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(cors({
     origin:process.env.FRONTEND_URI,
     credentials:true,
-    methods:["GET", "POST", "PUT", "DELETE"]
+    methods:["GET", "POST", "PUT", "DELETE", "PATCH"]
 }))
 import user from "./routes/userRoutes.js";
 import job from "./routes/jobRoutes.js";
