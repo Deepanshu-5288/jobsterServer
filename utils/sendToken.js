@@ -4,7 +4,8 @@ export const sendToken=(res, user, message, statusCode)=>{
         httpOnly:true,
         sameSite:"none",
         expires:new Date(Date.now() + 15*60*60*1000),
-        secure:true
+        secure:true,
+        path:"/"
     }
     res.status(statusCode).cookie("token", token, options).json({
         success:true,
