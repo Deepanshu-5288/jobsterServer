@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const schema = new mongoose.Schema({
+const schema = new mongoose.Schema([{
     position:{
         type:String,
         required:[true, "please enter the position"]
@@ -25,8 +25,12 @@ const schema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now()
     }
-})
+}])
 
 
 export const Job = mongoose.model("Job", schema);

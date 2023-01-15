@@ -1,6 +1,7 @@
 import {catchAsyncError} from "../middleWares/catchAsyncError.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import {Job} from "../models/jobModel.js";
+import jobApiFeatures from "../utils/jobApiFeatures.js";
 
 
 
@@ -22,10 +23,17 @@ export const addJob = catchAsyncError(async (req, res, next) =>{
 
 //get all jobs
 export const getJobs = catchAsyncError(async (req, res, next)=>{
-    const jobs = await Job.find({user_id:req.user._id});
+    const resultPerPage = 5;
+    const jobFeatures = new jobApiFeatures(Job.find(), req.query).UserJobs(req.user._id).Search().Filter().Sort().Pagination(resultPerPage);
+    const jobs = await jobFeatures.query;
+    const totalJobs = await Job.count({user_id:req.user._id});
+    const totalPages = Math.ceil(totalJobs/resultPerPage);
     res.status(200).json({
         success:true,
-        jobs
+        jobs,
+        resultPerPage,
+        totalJobs,
+        totalPages
     })
 })
 
@@ -56,4 +64,39 @@ export const deleteJob = catchAsyncError(async (req, res, next)=>{
         success:true,
         message:"Job deleted successfully"
     })
+})
+
+
+//get stats
+export const getStats = catchAsyncError(async (req, res, next) =>{
+    const interview = await Job.count({user_id:req.user._id, status:"interview"});
+    const pending = await Job.count({user_id:req.user._id, status:"pending"});
+    const declined = await Job.count({user_id:req.user._id, status:"declined"});
+
+    function getMonthName(monthNumber) {
+        const date = new Date();
+        date.setMonth(monthNumber - 1);
+    
+        return date.toLocaleString('en-US', { month: 'short' });
+    }
+    const monthlyData = await Job.aggregate([
+        {$group: { _id : {year: { $year : "$createdAt" }, month: { $month : "$createdAt" }},
+                    count: {$sum:1}
+        }},
+        { $sort : { _id : -1 } },
+        {$limit:6}
+    ]);
+    let monthlyApplications =[];
+    monthlyData.map((item) =>{
+        const date = `${getMonthName(item._id.month)} ${item._id.year}`;
+        monthlyApplications.push({date, count:item.count})
+    })
+    res.status(200).json({
+        success:true,
+        stats:{
+            interview, pending, declined
+        },
+        monthlyApplications
+    })
+
 })
