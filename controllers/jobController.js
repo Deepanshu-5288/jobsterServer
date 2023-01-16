@@ -23,7 +23,7 @@ export const addJob = catchAsyncError(async (req, res, next) =>{
 
 //get all jobs
 export const getJobs = catchAsyncError(async (req, res, next)=>{
-    const resultPerPage = 5;
+    const resultPerPage = 8;
     const jobFeatures = new jobApiFeatures(Job.find(), req.query).UserJobs(req.user._id).Search().Filter().Sort().Pagination(resultPerPage);
     const jobs = await jobFeatures.query;
     const totalJobs = await Job.count({user_id:req.user._id});

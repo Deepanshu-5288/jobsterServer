@@ -1,7 +1,6 @@
 import express from "express";
 import { config } from "dotenv";
 import { ErrorMiddleWare } from "./middleWares/Error.js";
-import cookieParser from "cookie-parser";
 import cors from "cors";
 
 config({
@@ -15,12 +14,11 @@ app.use(
         extended:true
     })
 )
-app.use(cookieParser());
+
 app.use(cors({
     origin:process.env.FRONTEND_URI,
     credentials:true,
-    methods:["GET", "POST", "PUT", "DELETE", "PATCH"],
-    Headers: ["X-Requested-With", "X-HTTP-Method-Override", "Content-Type", "Accept"]
+    methods:["GET", "POST", "PUT", "DELETE", "PATCH"]
 }))
 import user from "./routes/userRoutes.js";
 import job from "./routes/jobRoutes.js";

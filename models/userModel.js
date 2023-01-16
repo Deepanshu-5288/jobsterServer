@@ -28,6 +28,11 @@ const schema =  mongoose.Schema({
         type:String,
         required:[true, "Please enter your location"],
         default:"location"
+    },
+    role:{
+        type:String,
+        required:[true, "Please enter your role"],
+        default:"user"
     }
 })
 

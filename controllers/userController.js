@@ -8,13 +8,13 @@ export const registerUser = catchAsyncError( async (req, res, next)=>{
     if(!name || !email || !password){
         return next(new ErrorHandler(404,"Please fill all the fields"));
     }
-    let user = await User.findOne({email});
-    if(user){
+    let userData = await User.findOne({email});
+    if(userData){
         return next(new ErrorHandler(400, "User with email already exist, please try with another email"));
     }
-    user = await User.create({name, email, password});
-    user.password = undefined;
-    sendToken(res, user, `Welcome ${user.name}`, 201);
+    userData = await User.create({name, email, password});
+    userData.password = undefined;
+    sendToken(res, userData, `Welcome ${userData.name}`, 201);
 })
 
 //login user
@@ -23,30 +23,25 @@ export const loginUser = catchAsyncError(async (req, res, next) =>{
     if(!email || !password){
         return next(new ErrorHandler(400, "Please fill all the fields"));
     }
-    let user = await User.findOne({email}).select("+password");
-    if(!user){
+    let userData = await User.findOne({email}).select("+password");
+    if(!userData){
         return next(new ErrorHandler(404, "email or password is not correct"));
     }
-    const isPasswordMatched = await user.comparePassword(password);
+    const isPasswordMatched = await userData.comparePassword(password);
     if(!isPasswordMatched){
         return next(new ErrorHandler(404, "email or password is not correct"));
     }
-    user.password = undefined;
-    sendToken(res, user, `Welcome back ${user.name}`,200);
+    userData.password = undefined;
+    sendToken(res, userData, `Welcome back ${userData.name}`,200);
 })
 
 //logout user
-export const logoutUser = catchAsyncError(async (req, res, next)=>{
-    res.status(200).cookie("token", null, {
-        httpOnly:true,
-        sameSite:"None",
-        expires: new Date(Date.now()),
-        secure:true,
-    }).json({
-        success:true,
-        message:"Logged out successfully"
-    })
-})
+// export const logoutUser = catchAsyncError(async (req, res, next)=>{
+//     res.status(200).json({
+//         success:true,
+//         message:"Logged out successfully"
+//     })
+// })
 
 //update profile
 export const updateUser = catchAsyncError(async (req, res, next)=>{
